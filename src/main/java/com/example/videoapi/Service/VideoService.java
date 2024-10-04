@@ -50,4 +50,13 @@ public class VideoService {
 
     }
 
+    public ResponseEntity<?> updateVideo(Long id, Video video) {
+        Optional<Video> videoEncontrado = videoRepository.findById(id);
+        if (videoEncontrado.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Excecoes("Video não encontrado"));
+        }
+        video.setId(id);
+        Video updatedVideo = videoRepository.save(video);
+        return ResponseEntity.ok(updatedVideo);
+    }
 }

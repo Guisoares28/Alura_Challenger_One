@@ -36,5 +36,10 @@ public class VideoController {
         return videoService.deletedById(id);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateVideo(@PathVariable Long id, @RequestBody Video video){
+        return videoService.updateVideo(id, video);
+    }
+
 
 }
