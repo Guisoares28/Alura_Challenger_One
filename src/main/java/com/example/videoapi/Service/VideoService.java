@@ -1,12 +1,12 @@
 package com.example.videoapi.Service;
 
-import com.example.videoapi.Exceptions.Excecoes;
+
 import com.example.videoapi.Model.Video;
 import com.example.videoapi.Repository.VideoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,45 +16,36 @@ public class VideoService {
     @Autowired
     VideoRepository videoRepository;
 
-    public ResponseEntity<Video> createdVideo(Video video){
+    public Video createdVideo(Video video){
         videoRepository.save(video);
-        return new ResponseEntity<>(video, HttpStatus.CREATED);
+        return video;
     }
 
 
-    public ResponseEntity<List<Video>> getAllVideo() {
-        List<Video> videos = videoRepository.findAll();
-        return new ResponseEntity<>(videos, HttpStatus.OK);
+    public List<Video> getAllVideo() {
+        return videoRepository.findAll();
     }
 
 
-    public ResponseEntity<?> getById(Long id) {
+    public Optional<Video> getById(Long id) {
+        return videoRepository.findById(id);
+    }
+
+    public Optional<Video> deletedById(Long id) {
         Optional<Video> optVideo = videoRepository.findById(id);
-        if(optVideo.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Excecoes("Não encontrado"));
-        }else{
-            return new ResponseEntity<>(optVideo.get(), HttpStatus.OK);
-        }
-    }
-
-    public ResponseEntity<?> deletedById(Long id) {
-        Optional<Video> optVideo = videoRepository.findById(id);
-        if (optVideo.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Excecoes("Falha ao deletar o Video"));
-        }else{
+        if (optVideo.isPresent()) {
             videoRepository.deleteById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(new Excecoes("Video deletado com sucesso!"));
         }
-
+        return optVideo;
     }
 
-    public ResponseEntity<?> updateVideo(Long id, Video video) {
+    public Optional<Video> updateVideo(Long id, Video video) {
         Optional<Video> videoEncontrado = videoRepository.findById(id);
-        if (videoEncontrado.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Excecoes("Video não encontrado"));
+        if (videoEncontrado.isPresent()) {
+            video.setId(id);
+            Video updatedVideo = videoRepository.save(video);
         }
-        video.setId(id);
-        Video updatedVideo = videoRepository.save(video);
-        return ResponseEntity.ok(updatedVideo);
+        return videoEncontrado;
     }
+
 }
