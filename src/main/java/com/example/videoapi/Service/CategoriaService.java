@@ -2,9 +2,8 @@ package com.example.videoapi.Service;
 
 import com.example.videoapi.Model.Categoria;
 import com.example.videoapi.Repository.CategoriaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -12,9 +11,12 @@ import java.util.Optional;
 @Service
 public class CategoriaService {
 
-    @Autowired
+
     CategoriaRepository categoriaRepository;
 
+    public CategoriaService(CategoriaRepository categoriaRepository){
+        this.categoriaRepository = categoriaRepository;
+    }
     public Categoria createVideo(Categoria categoria) {
         categoriaRepository.save(categoria);
         return categoria;
@@ -25,8 +27,7 @@ public class CategoriaService {
     }
 
     public Optional<Categoria> getByIdCategoria(Long id){
-        Optional<Categoria> categoria = categoriaRepository.findById(id);
-        return categoria;
+        return categoriaRepository.findById(id);
     }
 
     public Optional<Categoria> updateCategoria(Long id, Categoria categoria){
