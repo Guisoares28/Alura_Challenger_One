@@ -5,7 +5,6 @@ import com.example.videoapi.Model.Categoria;
 import com.example.videoapi.Model.Video;
 import com.example.videoapi.Repository.CategoriaRepository;
 import com.example.videoapi.Repository.VideoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -15,14 +14,12 @@ import java.util.Optional;
 @Service
 public class VideoService {
 
-    private VideoRepository videoRepository;
+    private final VideoRepository videoRepository;
 
-    private CategoriaRepository categoriaRepository;
+    private final CategoriaRepository categoriaRepository;
 
-    public VideoService() {
-    }
 
-    @Autowired
+
     public VideoService(CategoriaRepository categoriaRepository, VideoRepository videoRepository){
         this.categoriaRepository = categoriaRepository;
         this.videoRepository = videoRepository;
@@ -61,13 +58,21 @@ public class VideoService {
     public Video updateVideo(Long id, Video video) {
         Video videoEncontrado = videoRepository.findById(id)
                 .orElseThrow(VideoNotFoundException::new);
+        boolean categoriaExiste = categoriaRepository.existsById(video.getIdCategoria());
+        if (categoriaExiste){
+            Optional<Categoria> categoriaEncontrada = categoriaRepository.findById(video.getIdCategoria());
+            video.setCategoria(categoriaEncontrada.get());
+
+        }else{
+            Optional<Categoria> categoriaEncontrada = categoriaRepository.findById(1L);
+            video.setCategoria(categoriaEncontrada.get());
+        }
         videoEncontrado.setTitulo(video.getTitulo());
         videoEncontrado.setDescricao(video.getDescricao());
         videoEncontrado.setUrl(video.getUrl());
         videoEncontrado.setCategoria(video.getCategoria());
         videoRepository.save(videoEncontrado);
         return videoEncontrado;
-
     }
 
     public List<Video> getVideoByCategoria(Long categoriaId){

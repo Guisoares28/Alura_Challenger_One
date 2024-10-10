@@ -3,7 +3,6 @@ package com.example.videoapi.Service;
 import com.example.videoapi.Exceptions.VideoNotFoundException;
 import com.example.videoapi.Model.Categoria;
 import com.example.videoapi.Repository.CategoriaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -13,10 +12,7 @@ public class CategoriaService {
 
     CategoriaRepository categoriaRepository;
 
-    public CategoriaService() {
-    }
 
-    @Autowired
     public CategoriaService(CategoriaRepository categoriaRepository){
         this.categoriaRepository = categoriaRepository;
     }
@@ -31,12 +27,11 @@ public class CategoriaService {
     }
 
     public Categoria getByIdCategoria(Long id){
-        return categoriaRepository.findById(id).orElseThrow(()-> new VideoNotFoundException());
+        return categoriaRepository.findById(id).orElseThrow(VideoNotFoundException::new);
     }
 
     public Categoria updateCategoria(Long id, Categoria categoria){
-        Categoria categoriaEncontrada = categoriaRepository.findById(id).orElseThrow(() -> new VideoNotFoundException());
-        categoriaEncontrada.setId(categoria.getId());
+        Categoria categoriaEncontrada = categoriaRepository.findById(id).orElseThrow(VideoNotFoundException::new);
         categoriaEncontrada.setTitulo(categoria.getTitulo());
         categoriaEncontrada.setCor(categoria.getCor());
         categoriaRepository.save(categoriaEncontrada);
@@ -44,7 +39,7 @@ public class CategoriaService {
     }
 
     public Categoria deleteById(Long id){
-        Categoria categoria = categoriaRepository.findById(id).orElseThrow(() -> new VideoNotFoundException());
+        Categoria categoria = categoriaRepository.findById(id).orElseThrow(VideoNotFoundException::new);
         categoriaRepository.deleteById(id);
         return categoria;
     }

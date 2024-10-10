@@ -13,8 +13,12 @@ import java.util.List;
 @RequestMapping("/categoria")
 public class CategoriaController {
 
-    @Autowired
     CategoriaService categoriaService;
+
+
+    public CategoriaController(CategoriaService categoriaService){
+        this.categoriaService = categoriaService;
+    }
 
     @PostMapping
     public ResponseEntity<Categoria> createCategoria(@Valid @RequestBody Categoria categoria){
@@ -43,7 +47,7 @@ public class CategoriaController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteById(@PathVariable Long id){
         categoriaService.deleteById(id);
-        return ResponseEntity.status(HttpStatus.OK).body("Video deletado com sucesso!");
+        return ResponseEntity.status(HttpStatus.OK).body("Categoria deletada com sucesso!");
     }
 
 
