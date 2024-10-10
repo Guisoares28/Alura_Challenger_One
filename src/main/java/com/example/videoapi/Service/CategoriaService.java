@@ -1,22 +1,26 @@
 package com.example.videoapi.Service;
 
+import com.example.videoapi.Exceptions.VideoNotFoundException;
 import com.example.videoapi.Model.Categoria;
 import com.example.videoapi.Repository.CategoriaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class CategoriaService {
 
-
     CategoriaRepository categoriaRepository;
 
+    public CategoriaService() {
+    }
+
+    @Autowired
     public CategoriaService(CategoriaRepository categoriaRepository){
         this.categoriaRepository = categoriaRepository;
     }
+
     public Categoria createVideo(Categoria categoria) {
         categoriaRepository.save(categoria);
         return categoria;
@@ -26,24 +30,23 @@ public class CategoriaService {
         return categoriaRepository.findAll();
     }
 
-    public Optional<Categoria> getByIdCategoria(Long id){
-        return categoriaRepository.findById(id);
+    public Categoria getByIdCategoria(Long id){
+        return categoriaRepository.findById(id).orElseThrow(()-> new VideoNotFoundException());
     }
 
-    public Optional<Categoria> updateCategoria(Long id, Categoria categoria){
-        Optional<Categoria> categoriaEncontrada = categoriaRepository.findById(id);
-        if(categoriaEncontrada.isPresent()){
-            categoria.setId(id);
-            categoriaRepository.save(categoria);
-        }
+    public Categoria updateCategoria(Long id, Categoria categoria){
+        Categoria categoriaEncontrada = categoriaRepository.findById(id).orElseThrow(() -> new VideoNotFoundException());
+        categoriaEncontrada.setId(categoria.getId());
+        categoriaEncontrada.setTitulo(categoria.getTitulo());
+        categoriaEncontrada.setCor(categoria.getCor());
+        categoriaRepository.save(categoriaEncontrada);
         return categoriaEncontrada;
     }
 
-    public Optional<Categoria> deleteById(Long id){
-        Optional<Categoria> categoria = categoriaRepository.findById(id);
-        if (categoria.isPresent()){
-            categoriaRepository.deleteById(id);
-        }
+    public Categoria deleteById(Long id){
+        Categoria categoria = categoriaRepository.findById(id).orElseThrow(() -> new VideoNotFoundException());
+        categoriaRepository.deleteById(id);
         return categoria;
     }
+
 }

@@ -1,23 +1,42 @@
 package com.example.videoapi.Service;
 
-
 import com.example.videoapi.Exceptions.VideoNotFoundException;
+import com.example.videoapi.Model.Categoria;
 import com.example.videoapi.Model.Video;
+import com.example.videoapi.Repository.CategoriaRepository;
 import com.example.videoapi.Repository.VideoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+
+
 @Service
 public class VideoService {
 
-    VideoRepository videoRepository;
+    private VideoRepository videoRepository;
 
-    public VideoService(VideoRepository videoRepository){
+    private CategoriaRepository categoriaRepository;
+
+    public VideoService() {
+    }
+
+    @Autowired
+    public VideoService(CategoriaRepository categoriaRepository, VideoRepository videoRepository){
+        this.categoriaRepository = categoriaRepository;
         this.videoRepository = videoRepository;
     }
 
+
     public Video createdVideo(Video video){
+        Optional<Categoria> categoria = categoriaRepository.findById(video.getIdCategoria());
+        if(categoria.isPresent()){
+            video.setCategoria(categoria.get());
+        }else{
+            Optional<Categoria> categoria_id = categoriaRepository.findById(1L);
+            video.setCategoria(categoria_id.get());
+        }
         videoRepository.save(video);
         return video;
     }
@@ -29,19 +48,19 @@ public class VideoService {
 
 
     public Video getById(Long id) {
-        return videoRepository.findById(id).orElseThrow(() -> new VideoNotFoundException("Não encontrado"));
+        return videoRepository.findById(id).orElseThrow(VideoNotFoundException::new);
     }
 
     public Video deletedById(Long id) {
         Video video = videoRepository.findById(id)
-                .orElseThrow(() -> new VideoNotFoundException("Video não encontrado"));
+                .orElseThrow(VideoNotFoundException::new);
         videoRepository.deleteById(id);
         return video;
     }
 
     public Video updateVideo(Long id, Video video) {
         Video videoEncontrado = videoRepository.findById(id)
-                .orElseThrow(() -> new VideoNotFoundException("Video não encontrado"));
+                .orElseThrow(VideoNotFoundException::new);
         videoEncontrado.setTitulo(video.getTitulo());
         videoEncontrado.setDescricao(video.getDescricao());
         videoEncontrado.setUrl(video.getUrl());
@@ -50,5 +69,14 @@ public class VideoService {
         return videoEncontrado;
 
     }
+
+    public List<Video> getVideoByCategoria(Long categoriaId){
+        return videoRepository.findByCategoriaId(categoriaId);
+    }
+
+    public List<Video> getVideoByTitulo(String titulo){
+        return videoRepository.findByTituloContainingIgnoreCase(titulo);
+    }
+
 
 }

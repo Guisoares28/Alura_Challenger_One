@@ -12,10 +12,10 @@ public class Categoria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotBlank
+    @NotBlank(message = "Titulo não pode ser vazio")
     String titulo;
 
-    @NotBlank
+    @NotBlank(message = "Cor não pode ser vazia")
     String cor;
 
     @OneToMany(mappedBy = "categoria")

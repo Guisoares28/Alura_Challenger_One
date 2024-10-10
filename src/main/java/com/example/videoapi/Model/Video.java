@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 
+
 @Entity
 @Table(name = "Videos")
 public class Video {
@@ -11,21 +12,20 @@ public class Video {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotBlank
+    @NotBlank(message = "Titulo não pode ser vazio")
     @Column(name = "titulo")
     String titulo;
 
-    @NotBlank
+    @NotBlank(message = "Descrição não pode ser vazia")
     @Column(name = "descricao")
     String descricao;
 
-    @NotBlank
+    @NotBlank(message = "Url não pode ser vazia")
     @Column(name = "url")
     String url;
 
     @ManyToOne
     @JoinColumn(name = "categoria_id", nullable = false)
-    @NotBlank
     private Categoria categoria;
 
     public Video() {
@@ -38,6 +38,9 @@ public class Video {
         this.categoria = categoria;
     }
 
+    public Long getIdCategoria(){
+        return categoria.getId();
+    }
 
     public Long getId() {
         return id;

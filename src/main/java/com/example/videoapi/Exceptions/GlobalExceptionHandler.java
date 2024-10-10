@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(VideoNotFoundException.class)
-    public ResponseEntity<VideoNotFoundException> handleVideoNotFoundException(VideoNotFoundException e){
-        return new ResponseEntity<>(new VideoNotFoundException("Video não encontrado"), HttpStatus.NOT_FOUND);
+    public ResponseEntity<String> handleVideoNotFoundException(VideoNotFoundException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
 }
